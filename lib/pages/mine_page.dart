@@ -12,7 +12,10 @@ class _MinePageState extends State<MinePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('我的'),
+        backgroundColor: const Color.fromRGBO(220, 220, 220, 1.0),
+
+        title: const Text('我的'),
+        centerTitle: true,
       ),
       body: const Center(
         child: Text('我的'),

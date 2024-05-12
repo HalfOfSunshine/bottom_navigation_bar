@@ -12,10 +12,13 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('发现'),
+        title: Text('首页'),
+        backgroundColor: const Color.fromRGBO(220, 220, 220, 1.0),
+
+        centerTitle: true,
       ),
       body: const Center(
-        child: Text('发现'),
+        child: Text('首页'),
       ),
     );
   }

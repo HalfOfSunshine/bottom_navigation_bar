@@ -6,59 +6,73 @@ class DiscoverCell extends StatelessWidget {
   final String? subTitle;
   final String imageName;
   final String? subImageName;
+  final GestureTapCallback? onTap;
 
   const DiscoverCell({
+    super.key,
     required this.title,
     this.subTitle,
     required this.imageName,
     this.subImageName,
-  }):assert(title != null,"title不能为空"),assert(imageName != null,"imageName不能为空");
+    this.onTap,
+  }) ;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        //主轴是spaceBetween
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          //left
-          Container(
-            padding: EdgeInsets.all(10),
-            child: Row(
-              children: [
-                //图标
-                Image(
-                  image: AssetImage(imageName),
-                  width: 20,
-                ),
-                //间隙
-                const SizedBox(
-                  width: 15,
-                ),
-                //title
-                Text(title),
-              ],
+    return GestureDetector(
+      onTap: (){
+        print('tapAction $title');
+        onTap?.call();
+      },
+      child: Container(
+        color: Colors.white,
+        //固定高度，高度没固定之前由padding以及内部组件撑起来（尤其是图片）
+        height: 45,
+        child: Row(
+          //主轴是spaceBetween
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            //left
+            Container(
+              padding: EdgeInsets.all(10),
+              child: Row(
+                children: [
+                  //图标
+                  Image(
+                    image: AssetImage(imageName),
+                    width: 20,
+                  ),
+                  //间隙
+                  const SizedBox(
+                    width: 15,
+                  ),
+                  //title
+                  Text(title),
+                ],
+              ),
             ),
-          ),
-          //right
-          Container(
-            padding: const EdgeInsets.all(10),
-            child: Row(
-              children: [
-                //subtitle
-                subTitle != null ? Text(subTitle!) : const Text(""),
+            //right
+            Container(
+              padding: const EdgeInsets.all(10),
+              child: Row(
+                children: [
+                  //subtitle
+                  subTitle != null ? Text(subTitle!) : const Text(""),
 
-                //subImage
-                subImageName != null ? Image.asset(subImageName!) : Container(),
-                //箭头
-                const Image(
-                  image: AssetImage("images/ad_icon3.png"),
-                  width: 15,
-                )
-              ],
-            ),
-          )
-        ],
+                  //subImage width: 15避免被图片撑大
+                  subImageName != null
+                      ? Image.asset(
+                          subImageName!,
+                          width: 15,
+                        )
+                      : Container(),
+                  //箭头
+                  const Icon(Icons.arrow_forward_ios),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

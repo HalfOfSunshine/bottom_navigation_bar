@@ -13,6 +13,9 @@ class _FriendPageState extends State<FriendPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('通讯录'),
+        centerTitle: true,
+        backgroundColor: const Color.fromRGBO(220, 220, 220, 1.0),
+
       ),
       body: const Center(
         child: Text('通讯录'),

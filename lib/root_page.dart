@@ -32,11 +32,13 @@ class _RootPageState extends State<RootPage> {
           unselectedFontSize: 10,
           unselectedLabelStyle: TextStyle(color: Colors.grey),
           selectedLabelStyle: TextStyle(color: Colors.green),
+          showUnselectedLabels: true,
           currentIndex: _currentIndex,
           items: const [
             BottomNavigationBarItem(
                 icon: Image(
                   image: AssetImage('images/ad_icon0.png'),
+                  height: 24,
                 ),
                 label: "首页"),
             BottomNavigationBarItem(
