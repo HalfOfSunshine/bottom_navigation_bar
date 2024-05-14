@@ -1,6 +1,6 @@
 import 'package:bottom_navigation_bar/pages/chat_page.dart';
-import 'package:bottom_navigation_bar/pages/dicover_page.dart';
-import 'package:bottom_navigation_bar/pages/friend_page.dart';
+import 'package:bottom_navigation_bar/pages/discover_pages/dicover_page.dart';
+import 'package:bottom_navigation_bar/pages/friends/friend_page.dart';
 import 'package:bottom_navigation_bar/pages/mine_page.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +12,7 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
-  int _currentIndex = 3;
+  int _currentIndex = 1;
   List<Widget> pages = [ChatPage(), FriendPage(), DiscoverPage(), MinePage()];
   @override
   Widget build(BuildContext context) {

@@ -1,3 +1,4 @@
+import 'package:bottom_navigation_bar/app_config.dart';
 import 'package:flutter/material.dart';
 
 class ChatPage extends StatefulWidget {
@@ -13,7 +14,7 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('首页'),
-        backgroundColor: const Color.fromRGBO(220, 220, 220, 1.0),
+        backgroundColor: mainColor,
 
         centerTitle: true,
       ),
