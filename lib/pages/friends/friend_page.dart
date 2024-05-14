@@ -23,10 +23,10 @@ class _FriendPageState extends State<FriendPage> {
                         title: '添加朋友',
                       )));
             },
-            child: Container(
+            child: const SizedBox(
               width: 50,
               height: 50,
-              child: const Icon(Icons.supervisor_account),
+              child: Icon(Icons.supervisor_account),
             ),
           ),
         ],
