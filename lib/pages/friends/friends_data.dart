@@ -1,16 +1,18 @@
 class Friends {
   Friends({
-    required this.imageUrl,
-    required this.name,
-    required this.indexLetter,
+    this.imageAsset,
+    this.imageUrl,
+    this.name,
+    this.indexLetter,
   });
 
-  final String imageUrl;
-  final String name;
-  final String indexLetter;
+  final String? imageAsset;
+  final String? imageUrl;
+  final String? name;
+  final String? indexLetter;
 }
 
-List<Friends> datasource = [
+List<Friends> friendsDatasource = [
   Friends(
     imageUrl: 'https://randomuser.me/api/portraits/women/27.jpg',
     name: 'Lina',
@@ -162,4 +164,3 @@ List<Friends> datasource = [
     indexLetter: 'F',
   ),
 ];
-
