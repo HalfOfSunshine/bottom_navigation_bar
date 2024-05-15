@@ -11,7 +11,7 @@ class FriendPage extends StatefulWidget {
 }
 
 class _FriendPageState extends State<FriendPage> {
-  List<Friends> _headData = [
+  final List<Friends> _headData = [
     Friends(
       imageAsset: 'images/群聊.png',
       name: '新的朋友',
@@ -20,6 +20,22 @@ class _FriendPageState extends State<FriendPage> {
     Friends(imageAsset: 'images/群聊.png', name: '标签'),
     Friends(imageAsset: 'images/群聊.png', name: '公众号'),
   ];
+  final List<Friends> _listData = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // _listData.addAll(friendsDatasource);
+    //  添加多次，链式语法
+    _listData
+      ..addAll(friendsDatasource)
+      ..addAll(friendsDatasource);
+    //排序
+    _listData.sort((Friends a, Friends b) {
+      return a.indexLetter!.compareTo(b.indexLetter!);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +64,7 @@ class _FriendPageState extends State<FriendPage> {
         color: mainColor,
         child: ListView.builder(
           itemBuilder: _itemForRow,
-          itemCount: _headData.length + friendsDatasource.length,
+          itemCount: _headData.length + _listData.length,
         ),
       ),
     );
@@ -62,10 +78,15 @@ class _FriendPageState extends State<FriendPage> {
         name: _headData[index].name,
       );
     }
+    //剩下的cell
+    //不显示组名字
+    bool hiddenGroupTitle = (index - 4 > 0 &&
+        _listData[index - 4].indexLetter == _listData[index - 5].indexLetter);
+    //显示组名字
     return _FriendCell(
-      imageUrl: friendsDatasource[index - 4].imageUrl,
-      name: friendsDatasource[index - 4].name,
-      // groupTitle: friendsDatasource[index-4].indexLetter,
+      imageUrl: _listData[index - 4].imageUrl,
+      name: _listData[index - 4].name,
+      groupTitle: hiddenGroupTitle?null:_listData[index - 4].indexLetter,
     );
   }
 }
@@ -83,53 +104,69 @@ class _FriendCell extends StatelessWidget {
   final String? imageAsset; //本地图片
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Row(
+    return Column(
+      children: [
+        Container(
+          height: groupTitle != null ? 30 : 0,
+          color: mainColor,
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.only(left: 10),
+          child: groupTitle != null
+              ? Text(
+                  '$groupTitle',
+                  style: TextStyle(color: Colors.grey),
+                )
+              : null,
+        ), //头部
+        Container(
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              //图片
-              Container(
-                margin: EdgeInsets.all(10),
-                width: 34,
-                height: 34,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6.0),
-                    image: DecorationImage(
-                      // image: imageUrl != null?NetworkImage(imageUrl!):AssetImage(imageAsset!),
+              Row(
+                children: [
+                  //图片
+                  Container(
+                    margin: EdgeInsets.all(10),
+                    width: 34,
+                    height: 34,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6.0),
+                        image: DecorationImage(
+                          // image: imageUrl != null?NetworkImage(imageUrl!):AssetImage(imageAsset!),
 
-                      image: _buildImageProvider(),
-                    )),
+                          image: _buildImageProvider(),
+                        )),
+                  ),
+                  //昵称
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '$name',
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                  ),
+                ],
               ),
-              //昵称
+              //下划线 安卓自带下划线，苹果没有
               Container(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  '$name',
-                  style: const TextStyle(fontSize: 18),
-                ),
+                color: Colors.grey,
+                width: screenSize(context).width - 55,
+                height: 0.2,
+                // child: Row(
+                //   children: [
+                //     Container(
+                //       height: 0.2,
+                //       width: 55,
+                //       color: Colors.white,
+                //     )
+                //   ],
+                // ),
               ),
             ],
           ),
-          //下划线 安卓自带下划线，苹果没有
-          Container(
-            color: Colors.grey,
-            width: screenSize(context).width-55,
-            height: 0.2,
-            // child: Row(
-            //   children: [
-            //     Container(
-            //       height: 0.2,
-            //       width: 55,
-            //       color: Colors.white,
-            //     )
-            //   ],
-            // ),
-          ),
-        ],
-      ),
+        ) //Cell内容
+      ],
     );
   }
 
