@@ -1,6 +1,7 @@
 import 'package:bottom_navigation_bar/app_config.dart';
 import 'package:bottom_navigation_bar/pages/discover_pages/discover_child_page.dart';
 import 'package:bottom_navigation_bar/pages/friends/friends_data.dart';
+import 'package:bottom_navigation_bar/pages/friends/index_bar.dart';
 import 'package:flutter/material.dart';
 
 class FriendPage extends StatefulWidget {
@@ -40,34 +41,38 @@ class _FriendPageState extends State<FriendPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('通讯录'),
-        actions: [
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => const DiscoverChildPage(
-                        title: '添加朋友',
-                      )));
-            },
-            child: const SizedBox(
-              width: 50,
-              height: 50,
-              child: Icon(Icons.supervisor_account),
+        appBar: AppBar(
+          title: const Text('通讯录'),
+          actions: [
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) => const DiscoverChildPage(
+                          title: '添加朋友',
+                        )));
+              },
+              child: const SizedBox(
+                width: 50,
+                height: 50,
+                child: Icon(Icons.supervisor_account),
+              ),
             ),
-          ),
-        ],
-        centerTitle: true,
-        backgroundColor: mainColor,
-      ),
-      body: Container(
-        color: mainColor,
-        child: ListView.builder(
-          itemBuilder: _itemForRow,
-          itemCount: _headData.length + _listData.length,
+          ],
+          centerTitle: true,
+          backgroundColor: mainColor,
         ),
-      ),
-    );
+        body: Stack(
+          children: [
+            Container(
+              color: mainColor,
+              child: ListView.builder(
+                itemBuilder: _itemForRow,
+                itemCount: _headData.length + _listData.length,
+              ),
+            ),
+            IndexBar(),//悬浮条
+          ],
+        ));
   }
 
   Widget? _itemForRow(BuildContext context, int index) {
@@ -86,7 +91,7 @@ class _FriendPageState extends State<FriendPage> {
     return _FriendCell(
       imageUrl: _listData[index - 4].imageUrl,
       name: _listData[index - 4].name,
-      groupTitle: hiddenGroupTitle?null:_listData[index - 4].indexLetter,
+      groupTitle: hiddenGroupTitle ? null : _listData[index - 4].indexLetter,
     );
   }
 }
@@ -182,3 +187,4 @@ class _FriendCell extends StatelessWidget {
     }
   }
 }
+
