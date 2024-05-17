@@ -12,6 +12,11 @@ class FriendPage extends StatefulWidget {
 }
 
 class _FriendPageState extends State<FriendPage> {
+  //字典，里面放高度对应的数据，计算得出,再设置UI的位置计算，initState()
+  final double _cellHeight = 54.2;
+  final double _groupHeight = 30;
+
+  final Map _groupOffSetMap = {};
   final List<Friends> _headData = [
     Friends(
       imageAsset: 'images/群聊.png',
@@ -22,9 +27,11 @@ class _FriendPageState extends State<FriendPage> {
     Friends(imageAsset: 'images/群聊.png', name: '公众号'),
   ];
   final List<Friends> _listData = [];
+  late ScrollController _scrollController;
 
   @override
   void initState() {
+    _scrollController = ScrollController();
     // TODO: implement initState
     super.initState();
     // _listData.addAll(friendsDatasource);
@@ -36,6 +43,24 @@ class _FriendPageState extends State<FriendPage> {
     _listData.sort((Friends a, Friends b) {
       return a.indexLetter!.compareTo(b.indexLetter!);
     });
+    var _groupOffset = _cellHeight * _headData.length;
+    //计算头位置
+    for (int i = 0; i < _listData.length; i++) {
+      if (i < 1) {
+        //第一个cell一定有头
+        _groupOffSetMap.addAll({_listData[i].indexLetter: _groupOffset});
+        //保存完了再+_groupHeight
+        _groupOffset += _cellHeight + _groupHeight;
+      }else if(_listData[i].indexLetter == _listData[i-1].indexLetter){
+        //增加高度即可，同一个头不多次存储
+        _groupOffset += _cellHeight;
+      }else{
+        //第一个cell一定有头
+        _groupOffSetMap.addAll({_listData[i].indexLetter: _groupOffset});
+        //保存完了再+_groupHeight
+        _groupOffset += _cellHeight + _groupHeight;
+      }
+    }
   }
 
   @override
@@ -66,11 +91,20 @@ class _FriendPageState extends State<FriendPage> {
             Container(
               color: mainColor,
               child: ListView.builder(
+                controller: _scrollController,
                 itemBuilder: _itemForRow,
                 itemCount: _headData.length + _listData.length,
               ),
             ),
-            IndexBar(),//悬浮条
+            IndexBar(
+              indexBarCallBack: (String str) {
+                if(_groupOffSetMap[str] != null) {
+                  _scrollController.animateTo(_groupOffSetMap[str],
+                      duration: Duration(microseconds: 100),
+                      curve: Curves.easeIn);
+                }
+              },
+            ), //悬浮条
           ],
         ));
   }
@@ -140,7 +174,10 @@ class _FriendCell extends StatelessWidget {
                         image: DecorationImage(
                           // image: imageUrl != null?NetworkImage(imageUrl!):AssetImage(imageAsset!),
 
-                          image: _buildImageProvider(),
+                          // image: _buildImageProvider(),
+                          image: imageUrl != null
+                              ? NetworkImage(imageUrl!) as ImageProvider
+                              : AssetImage(imageAsset!),
                         )),
                   ),
                   //昵称
@@ -187,4 +224,3 @@ class _FriendCell extends StatelessWidget {
     }
   }
 }
-

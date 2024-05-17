@@ -2,8 +2,8 @@ import 'package:bottom_navigation_bar/app_config.dart';
 import 'package:flutter/material.dart';
 
 class IndexBar extends StatefulWidget {
-  const IndexBar({super.key});
-
+  const IndexBar({super.key, this.indexBarCallBack});
+  final void Function(String str)? indexBarCallBack;
   @override
   State<IndexBar> createState() => _IndexBarState();
 }
@@ -48,14 +48,15 @@ class _IndexBarState extends State<IndexBar> {
         width: 30,
         child: GestureDetector(
           onVerticalDragDown: (DragDownDetails details) {
-            print('进入到了${details.globalPosition}');
+            widget.indexBarCallBack!(getIndex(context, details.globalPosition));
             setState(() {
               _bkColor = Color.fromRGBO(1, 1, 1, 0.5);
               _textColor = Colors.white;
             });
           },
           onVerticalDragUpdate: (DragUpdateDetails details) {
-            String str = getIndex(context, details.globalPosition);
+            // String str = getIndex(context, details.globalPosition);
+            widget.indexBarCallBack!(getIndex(context, details.globalPosition));
           },
           onVerticalDragEnd: (DragEndDetails details) {
             setState(() {
