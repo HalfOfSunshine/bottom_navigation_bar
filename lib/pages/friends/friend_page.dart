@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:bottom_navigation_bar/app_config.dart';
 import 'package:bottom_navigation_bar/pages/discover_pages/discover_child_page.dart';
 import 'package:bottom_navigation_bar/pages/friends/friends_data.dart';
@@ -15,7 +17,7 @@ class _FriendPageState extends State<FriendPage> {
   //字典，里面放高度对应的数据，计算得出,再设置UI的位置计算，initState()
   final double _cellHeight = 54.2;
   final double _groupHeight = 30;
-
+  late double _groupOffset;
   final Map _groupOffSetMap = {};
   final List<Friends> _headData = [
     Friends(
@@ -43,7 +45,7 @@ class _FriendPageState extends State<FriendPage> {
     _listData.sort((Friends a, Friends b) {
       return a.indexLetter!.compareTo(b.indexLetter!);
     });
-    var _groupOffset = _cellHeight * _headData.length;
+    _groupOffset = _cellHeight * _headData.length;
     //计算头位置
     for (int i = 0; i < _listData.length; i++) {
       if (i < 1) {
@@ -51,11 +53,10 @@ class _FriendPageState extends State<FriendPage> {
         _groupOffSetMap.addAll({_listData[i].indexLetter: _groupOffset});
         //保存完了再+_groupHeight
         _groupOffset += _cellHeight + _groupHeight;
-      }else if(_listData[i].indexLetter == _listData[i-1].indexLetter){
+      } else if (_listData[i].indexLetter == _listData[i - 1].indexLetter) {
         //增加高度即可，同一个头不多次存储
         _groupOffset += _cellHeight;
-      }else{
-        //第一个cell一定有头
+      } else {
         _groupOffSetMap.addAll({_listData[i].indexLetter: _groupOffset});
         //保存完了再+_groupHeight
         _groupOffset += _cellHeight + _groupHeight;
@@ -64,7 +65,32 @@ class _FriendPageState extends State<FriendPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // 获取屏幕高度
+    double screenHeight = MediaQuery.of(context).size.height;
+    // 获取AppBar高度
+    double appBarHeight = AppBar().preferredSize.height;
+    // 获取BottomNavigationBar高度
+    double bottomNavHeight = kBottomNavigationBarHeight;
+    // 获取安全区的高度
+    double topPadding = MediaQuery.of(context).padding.top;
+    double bottomPadding = MediaQuery.of(context).padding.bottom;
+
+    // 可用的屏幕高度
+    double availableHeight = screenHeight - appBarHeight - bottomNavHeight - topPadding - bottomPadding;
+    double maxOffset = max(0, _groupOffset + _groupHeight - availableHeight);
+    print('======$maxOffset');
+    for (String key in _groupOffSetMap.keys.toList()) {
+      if (_groupOffSetMap[key]! > maxOffset) {
+        _groupOffSetMap[key] = maxOffset;
+      }
+    }
+  }
+  @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         appBar: AppBar(
           title: const Text('通讯录'),
@@ -98,9 +124,9 @@ class _FriendPageState extends State<FriendPage> {
             ),
             IndexBar(
               indexBarCallBack: (String str) {
-                if(_groupOffSetMap[str] != null) {
+                if (_groupOffSetMap[str] != null) {
                   _scrollController.animateTo(_groupOffSetMap[str],
-                      duration: Duration(microseconds: 100),
+                      duration: Duration(milliseconds: 300),
                       curve: Curves.easeIn);
                 }
               },
