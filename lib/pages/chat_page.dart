@@ -12,18 +12,48 @@ class ChatPage extends StatefulWidget {
   State<ChatPage> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+//保数据 - 第1步  with AutomaticKeepAliveClientMixin<ChatPage>
+class _ChatPageState extends State<ChatPage>
+    with AutomaticKeepAliveClientMixin<ChatPage> {
+  List<ChatModel> _datas = [];
+  bool _cancelConnect = false;
+
+  // wantKeepAlive
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // Future future = getDatas();
-    // //Future相当于是一个封装了返回用的block的类。   应该只是为了便于初学者理解
-    // future.then((value) => {print('$value')});
+    Future<List<ChatModel>> future = getDatas();
+    //Future相当于是一个封装了返回用的block的类。   应该只是为了便于初学者理解
+    future
+        .then((List<ChatModel> datas) {
+          if (!_cancelConnect) {
+            setState(() {
+              _datas = datas;
+            });
+          }
+        })
+        .catchError((e) {
+          _cancelConnect = true;
+          print(e);
+        })
+        .whenComplete(() {
+          print('完毕');
+        })
+        .timeout(Duration(seconds: 1))
+        .catchError((timeout) {
+          print('$timeout');
+          _cancelConnect = true;
+        });
   }
 
-  //网络请求异步
+//网络请求异步
   Future<List<ChatModel>> getDatas() async {
+    //这里为什么要用setState()?直接_cancelConnect = false;不行吗？
+    // setState(() {
+    //   _cancelConnect = false;
+    // });
+    _cancelConnect = false;
     // http://rap2api.taobao.org/app/mock/318911/api/chat/list
     var url = Uri.http('rap2api.taobao.org', 'app/mock/318911/api/chat/list');
     final response = await http.get(url);
@@ -73,6 +103,8 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    //保数据 - 第3步
+    super.build(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('首页'),
@@ -100,47 +132,88 @@ class _ChatPageState extends State<ChatPage> {
         ],
       ),
       body: Container(
-        child: FutureBuilder(
-          //FutureBuilder 中future: getDatas()获得的数据最终会给到snapshot.data
-          future: getDatas(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasError) {
-                // 请求失败，显示错误
-                return Text("Error: ${snapshot.error}");
-              } else {
-                // 请求成功，显示数据
-                return ListView(
-                  children: snapshot.data.map<Widget>((ChatModel item) {
-                    return ListTile(
-                      title: Text(item.name!),
-                      subtitle: Container(
-                        alignment: Alignment.bottomLeft,//对齐底部
-                        padding: EdgeInsets.only(right: 10),
-                        height: 20,
-                        child: Text(item.message!,overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.grey,fontSize: 13),),
+        child: Container(
+          child: _datas.length == 0
+              ? Center(
+                  child: Text('加载中'),
+                )
+              : ListView.builder(
+                  itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    title: Text(_datas[index].name!),
+                    subtitle: Container(
+                      alignment: Alignment.bottomLeft, //对齐底部
+                      padding: EdgeInsets.only(right: 10),
+                      height: 20,
+                      child: Text(
+                        _datas[index].message!,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: Colors.grey, fontSize: 13),
                       ),
-                      // leading: CircleAvatar(
-                      //   backgroundImage: NetworkImage(item.imageUrl!),
-                      // ),
-                      leading: Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),image: DecorationImage(image: NetworkImage(item.imageUrl!))),
-                      ),
-                    );
-                  }).toList(),
-                );
-              }
-            } else {
-              // 请求未结束，显示loading
-              return CircularProgressIndicator();
-            }
-          },
+                    ),
+                    leading: Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          image: DecorationImage(
+                              image: NetworkImage(_datas[index].imageUrl!))),
+                    ),
+                  );
+                }),
         ),
+        // child: FutureBuilder(
+        //   //FutureBuilder 中future: getDatas()获得的数据最终会给到snapshot.data
+        //   future: getDatas(),
+        //   builder: (BuildContext context, AsyncSnapshot snapshot) {
+        //     if (snapshot.connectionState == ConnectionState.done) {
+        //       if (snapshot.hasError) {
+        //         // 请求失败，显示错误
+        //         return Text("Error: ${snapshot.error}");
+        //       } else {
+        //         // 请求成功，显示数据
+        //         return ListView(
+        //           children: snapshot.data.map<Widget>((ChatModel item) {
+        //             return ListTile(
+        //               title: Text(item.name!),
+        //               subtitle: Container(
+        //                 alignment: Alignment.bottomLeft, //对齐底部
+        //                 padding: EdgeInsets.only(right: 10),
+        //                 height: 20,
+        //                 child: Text(
+        //                   item.message!,
+        //                   overflow: TextOverflow.ellipsis,
+        //                   style: TextStyle(color: Colors.grey, fontSize: 13),
+        //                 ),
+        //               ),
+        //               // leading: CircleAvatar(
+        //               //   backgroundImage: NetworkImage(item.imageUrl!),
+        //               // ),
+        //               leading: Container(
+        //                 width: 44,
+        //                 height: 44,
+        //                 decoration: BoxDecoration(
+        //                     borderRadius: BorderRadius.circular(10),
+        //                     image: DecorationImage(
+        //                         image: NetworkImage(item.imageUrl!))),
+        //               ),
+        //             );
+        //           }).toList(),
+        //         );
+        //       }
+        //     } else {
+        //       // 请求未结束，显示loading
+        //       return CircularProgressIndicator();
+        //     }
+        //   },
+        // ),
       ),
     );
   }
+  //保数据 - 第2步
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
 
 class ChatModel {

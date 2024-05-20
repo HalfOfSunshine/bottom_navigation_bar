@@ -13,16 +13,34 @@ class RootPage extends StatefulWidget {
 
 class _RootPageState extends State<RootPage> {
   int _currentIndex = 0;
-  List<Widget> pages = [ChatPage(), FriendPage(), DiscoverPage(), MinePage()];
+  List<Widget> _pages = [ChatPage(), FriendPage(), DiscoverPage(), MinePage()];
+  //setState要重新渲染，重新种树，重新创建对象
+  //通过PageController内部切换，不会重新渲染，_pages的所有页面都会放在PageController的children里，所有页面都在widget树里面。通过jump的方式跳转
+  final PageController _controller = PageController();
+
   @override
   Widget build(BuildContext context) {
     return Container(
         child: Scaffold(
-      body: pages[_currentIndex],
+      //     不直接使用_pages[_currentIndex]，因为会重新渲染页面。PageView+PageController来跳转
+      // body: _pages[_currentIndex],
+      body: PageView(
+        // 不允许拖拽
+        physics: NeverScrollableScrollPhysics(),
+        // 拖拽后，页面回调，切换tabbar写到这里
+        // onPageChanged: (int index){_currentIndex = index;setState(() {
+        //
+        // });},
+        controller: _controller,
+        //
+        children: _pages,
+      ),
       bottomNavigationBar: BottomNavigationBar(
           onTap: (index) {
             setState(() {
               _currentIndex = index;
+              //此处需要跳转
+              _controller.jumpToPage(_currentIndex);
             });
           },
           // type: BottomNavigationBarType.fixed,
