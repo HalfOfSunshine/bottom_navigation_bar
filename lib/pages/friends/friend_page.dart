@@ -13,7 +13,8 @@ class FriendPage extends StatefulWidget {
   State<FriendPage> createState() => _FriendPageState();
 }
 
-class _FriendPageState extends State<FriendPage> {
+class _FriendPageState extends State<FriendPage>
+    with AutomaticKeepAliveClientMixin<FriendPage> {
   //字典，里面放高度对应的数据，计算得出,再设置UI的位置计算，initState()
   final double _cellHeight = 54.2;
   final double _groupHeight = 30;
@@ -79,7 +80,11 @@ class _FriendPageState extends State<FriendPage> {
     double bottomPadding = MediaQuery.of(context).padding.bottom;
 
     // 可用的屏幕高度
-    double availableHeight = screenHeight - appBarHeight - bottomNavHeight - topPadding - bottomPadding;
+    double availableHeight = screenHeight -
+        appBarHeight -
+        bottomNavHeight -
+        topPadding -
+        bottomPadding;
     double maxOffset = max(0, _groupOffset + _groupHeight - availableHeight);
     print('======$maxOffset');
     for (String key in _groupOffSetMap.keys.toList()) {
@@ -88,9 +93,10 @@ class _FriendPageState extends State<FriendPage> {
       }
     }
   }
+
   @override
   Widget build(BuildContext context) {
-
+    super.build(context);
     return Scaffold(
         appBar: AppBar(
           title: const Text('通讯录'),
@@ -154,6 +160,10 @@ class _FriendPageState extends State<FriendPage> {
       groupTitle: hiddenGroupTitle ? null : _listData[index - 4].indexLetter,
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
 
 class _FriendCell extends StatelessWidget {
