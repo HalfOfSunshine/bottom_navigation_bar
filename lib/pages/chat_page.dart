@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:bottom_navigation_bar/app_config.dart';
@@ -12,17 +13,41 @@ class ChatPage extends StatefulWidget {
   State<ChatPage> createState() => _ChatPageState();
 }
 
+func(message) {
+  print('开始');
+  for (int i = 1; i < 1000000000000; i++) {
+    print('结束了');
+  }
+}
 //保数据 - 第1步  with AutomaticKeepAliveClientMixin<ChatPage>
 class _ChatPageState extends State<ChatPage>
     with AutomaticKeepAliveClientMixin<ChatPage> {
   List<ChatModel> _datas = [];
   bool _cancelConnect = false;
+  late Timer _timer;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    if (_timer != null && _timer.isActive) {
+      _timer.cancel();
+    }
+  }
 
   // wantKeepAlive
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    int _count = 0;
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      _count++;
+      print(_count);
+      if (_count == 99) {
+        timer.cancel();
+      }
+    });
     Future<List<ChatModel>> future = getDatas();
     //Future相当于是一个封装了返回用的block的类。   应该只是为了便于初学者理解
     future
@@ -101,6 +126,8 @@ class _ChatPageState extends State<ChatPage>
     ));
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     //保数据 - 第3步
@@ -128,6 +155,14 @@ class _ChatPageState extends State<ChatPage>
                     _buildPopupMenuItem(Icons.payment, '首付款'),
                   ];
                 }),
+          ),
+          GestureDetector(
+            onTap: () {
+              compute(func, 123);
+            },
+            child: Container(
+              child: Icon(Icons.child_friendly),
+            ),
           ),
         ],
       ),
@@ -210,6 +245,7 @@ class _ChatPageState extends State<ChatPage>
       ),
     );
   }
+
   //保数据 - 第2步
   @override
   // TODO: implement wantKeepAlive
