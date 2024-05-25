@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:bottom_navigation_bar/app_config.dart';
+import 'package:bottom_navigation_bar/tool/http_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -24,30 +25,30 @@ class _ChatPageState extends State<ChatPage>
     with AutomaticKeepAliveClientMixin<ChatPage> {
   List<ChatModel> _datas = [];
   bool _cancelConnect = false;
-  late Timer _timer;
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    if (_timer != null && _timer.isActive) {
-      _timer.cancel();
-    }
-  }
+  // late Timer _timer;
+  //
+  // @override
+  // void dispose() {
+  //   // TODO: implement dispose
+  //   super.dispose();
+  //   if (_timer != null && _timer.isActive) {
+  //     _timer.cancel();
+  //   }
+  // }
 
   // wantKeepAlive
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    int _count = 0;
-    Timer.periodic(Duration(seconds: 1), (timer) {
-      _count++;
-      print(_count);
-      if (_count == 99) {
-        timer.cancel();
-      }
-    });
+    // int _count = 0;
+    // _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    //   _count++;
+    //   print(_count);
+    //   if (_count == 99) {
+    //     timer.cancel();
+    //   }
+    // });
     Future<List<ChatModel>> future = getDatas();
     //Future相当于是一个封装了返回用的block的类。   应该只是为了便于初学者理解
     future
@@ -80,13 +81,13 @@ class _ChatPageState extends State<ChatPage>
     // });
     _cancelConnect = false;
     // http://rap2api.taobao.org/app/mock/318911/api/chat/list
-    var url = Uri.http('rap2api.taobao.org', 'app/mock/318911/api/chat/list');
-    final response = await http.get(url);
+    // var url = Uri.http('rap2api.taobao.org', 'app/mock/318911/api/chat/list');
+    final response = await HttpManager.get('http://rap2api.taobao.org/app/mock/318911/api/chat/list');
     if (response.statusCode == 200) {
-      final responseBody = json.decode(response.body);
+      // final responseBody = json.decode(response.data);
       // List<ChatModel> result = ChatModel.forMap(responseBody['chat_list']) as List<ChatModel>;
       //map() 遍历取出内容
-      List<ChatModel> chatList = responseBody['chat_list']
+      List<ChatModel> chatList = response.data['chat_list']
           .map<ChatModel>((item) => ChatModel.forMap(item))
           .toList();
       return chatList;
@@ -95,7 +96,7 @@ class _ChatPageState extends State<ChatPage>
     }
 
     print('${response.statusCode}');
-    print('${response.body}');
+    print('${response.data}');
     // json转模型
     final chat = {
       'name': '张三',
