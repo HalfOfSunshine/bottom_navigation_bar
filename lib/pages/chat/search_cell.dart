@@ -1,4 +1,5 @@
 import 'package:bottom_navigation_bar/app_config.dart';
+import 'package:bottom_navigation_bar/pages/chat/search_page.dart';
 import 'package:flutter/material.dart';
 
 class SearchCell extends StatelessWidget {
@@ -7,7 +8,9 @@ class SearchCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
+        Navigator.of(context).push(
+            MaterialPageRoute(builder: (BuildContext context) => SearchPage()));
         print('点击了');
       },
       child: Container(
