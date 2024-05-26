@@ -1,4 +1,4 @@
-import 'package:bottom_navigation_bar/pages/chat_page.dart';
+import 'package:bottom_navigation_bar/pages/chat/chat_page.dart';
 import 'package:bottom_navigation_bar/pages/discover_pages/dicover_page.dart';
 import 'package:bottom_navigation_bar/pages/friends/friend_page.dart';
 import 'package:bottom_navigation_bar/pages/mine_page.dart';

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:bottom_navigation_bar/app_config.dart';
+import 'package:bottom_navigation_bar/pages/chat/search_cell.dart';
 import 'package:bottom_navigation_bar/tool/http_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -20,11 +21,13 @@ func(message) {
     print('结束了');
   }
 }
+
 //保数据 - 第1步  with AutomaticKeepAliveClientMixin<ChatPage>
 class _ChatPageState extends State<ChatPage>
     with AutomaticKeepAliveClientMixin<ChatPage> {
   List<ChatModel> _datas = [];
   bool _cancelConnect = false;
+
   // late Timer _timer;
   //
   // @override
@@ -82,7 +85,8 @@ class _ChatPageState extends State<ChatPage>
     _cancelConnect = false;
     // http://rap2api.taobao.org/app/mock/318911/api/chat/list
     // var url = Uri.http('rap2api.taobao.org', 'app/mock/318911/api/chat/list');
-    final response = await HttpManager.get('http://rap2api.taobao.org/app/mock/318911/api/chat/list');
+    final response = await HttpManager.get(
+        'http://rap2api.taobao.org/app/mock/318911/api/chat/list');
     if (response.statusCode == 200) {
       // final responseBody = json.decode(response.data);
       // List<ChatModel> result = ChatModel.forMap(responseBody['chat_list']) as List<ChatModel>;
@@ -126,8 +130,6 @@ class _ChatPageState extends State<ChatPage>
       ],
     ));
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -175,6 +177,9 @@ class _ChatPageState extends State<ChatPage>
                 )
               : ListView.builder(
                   itemBuilder: (BuildContext context, int index) {
+                  if (index == 0) {
+                    return SearchCell();
+                  }
                   return ListTile(
                     title: Text(_datas[index].name!),
                     subtitle: Container(
@@ -246,7 +251,6 @@ class _ChatPageState extends State<ChatPage>
       ),
     );
   }
-
   //保数据 - 第2步
   @override
   // TODO: implement wantKeepAlive
