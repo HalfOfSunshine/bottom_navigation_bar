@@ -91,11 +91,13 @@ class _ChatPageState extends State<ChatPage>
       // final responseBody = json.decode(response.data);
       // List<ChatModel> result = ChatModel.forMap(responseBody['chat_list']) as List<ChatModel>;
       //map() 遍历取出内容
+      print('成功了');
       List<ChatModel> chatList = response.data['chat_list']
           .map<ChatModel>((item) => ChatModel.forMap(item))
           .toList();
       return chatList;
     } else {
+      print('失败了');
       throw Exception('statusCode:${response.statusCode}');
     }
 
