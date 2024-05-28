@@ -1,16 +1,21 @@
 import 'package:bottom_navigation_bar/app_config.dart';
+import 'package:bottom_navigation_bar/pages/chat/chat_page.dart';
 import 'package:bottom_navigation_bar/pages/chat/search_page.dart';
 import 'package:flutter/material.dart';
 
 class SearchCell extends StatelessWidget {
-  const SearchCell({super.key});
+  const SearchCell({super.key, this.dataSource});
+
+  final List<ChatModel>? dataSource;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (BuildContext context) => SearchPage()));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (BuildContext context) => SearchPage(
+              dataSource: dataSource,
+                )));
         print('点击了');
       },
       child: Container(

@@ -180,7 +180,7 @@ class _ChatPageState extends State<ChatPage>
               : ListView.builder(
                   itemBuilder: (BuildContext context, int index) {
                   if (index == 0) {
-                    return SearchCell();
+                    return SearchCell(dataSource: _datas,);
                   }
                   return ListTile(
                     title: Text(_datas[index].name!),
