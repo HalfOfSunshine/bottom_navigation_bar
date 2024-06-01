@@ -43,7 +43,7 @@ class _MinePageState extends State<MinePage> {
               // 头像
               GestureDetector(
                 onTap: () {
-                  _methodChannel.invokeMapMethod('picture');
+                  _pickImage();
                 },
                 child: Container(
                   width: 70,
@@ -198,5 +198,9 @@ class _MinePageState extends State<MinePage> {
             ],
           )),
     );
+  }
+
+  void _pickImage() {
+
   }
 }
