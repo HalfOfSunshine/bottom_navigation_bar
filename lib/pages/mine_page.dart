@@ -13,8 +13,22 @@ class MinePage extends StatefulWidget {
 }
 
 class _MinePageState extends State<MinePage> {
-  MethodChannel _methodChannel = MethodChannel('mine_page');
+  MethodChannel _methodChannel = MethodChannel('mine_page/method');
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _methodChannel.setMethodCallHandler((call) {
+      print("进来了");
+      if(call.method == 'imagePath'){
+        print(call.arguments);
+        String imagePath = call.arguments.toString();
+      }
+      return Future(() {
 
+      });
+    });
+  }
   Widget headWidget() {
     return Container(
       height: 200,
@@ -36,14 +50,14 @@ class _MinePageState extends State<MinePage> {
                   height: 70,
                   // color: Colors.blue,
                   // child: Image(
-                  //   image: AssetImage('images/avator.jpg'),
+                  //   image: AssetImage('images/avatar.jpg'),
                   // ),
                   // BoxDecoration:装饰容器，与外面的冲突,外面的child会覆盖掉BoxDecoration，因此使用DecorationImage
                   decoration: BoxDecoration(
                       color: Colors.blue,
                       borderRadius: BorderRadius.circular(12),
                       image: const DecorationImage(
-                        image: AssetImage('images/avator.jpg'),
+                        image: AssetImage('images/avatar.jpg'),
                         fit: BoxFit.cover, //填充模式，类似UIViewContentMode
                       ),
                       boxShadow: const [
