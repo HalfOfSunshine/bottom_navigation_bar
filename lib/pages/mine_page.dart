@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:bottom_navigation_bar/pages/discover_pages/discover_child_page.dart';
 import 'package:bottom_navigation_bar/views/discover_cell.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:image_picker/image_picker.dart';
 
 class MinePage extends StatefulWidget {
   const MinePage({super.key});
@@ -14,21 +17,21 @@ class MinePage extends StatefulWidget {
 
 class _MinePageState extends State<MinePage> {
   MethodChannel _methodChannel = MethodChannel('mine_page/method');
-@override
+ File ?_avatarFile;
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _methodChannel.setMethodCallHandler((call) {
       print("进来了");
-      if(call.method == 'imagePath'){
+      if (call.method == 'imagePath') {
         print(call.arguments);
         String imagePath = call.arguments.toString();
       }
-      return Future(() {
-
-      });
+      return Future(() {});
     });
   }
+
   Widget headWidget() {
     return Container(
       height: 200,
@@ -36,7 +39,7 @@ class _MinePageState extends State<MinePage> {
       child: Container(
         child: Container(
           margin:
-          const EdgeInsets.only(left: 10, top: 100, bottom: 10, right: 10),
+              const EdgeInsets.only(left: 10, top: 100, bottom: 10, right: 10),
           color: Colors.white,
           child: Row(
             children: [
@@ -56,8 +59,8 @@ class _MinePageState extends State<MinePage> {
                   decoration: BoxDecoration(
                       color: Colors.blue,
                       borderRadius: BorderRadius.circular(12),
-                      image: const DecorationImage(
-                        image: AssetImage('images/avatar.jpg'),
+                      image:  DecorationImage(
+                        image: _avatarFile == null?AssetImage('images/avatar.jpg') as ImageProvider:FileImage(_avatarFile!) ,
                         fit: BoxFit.cover, //填充模式，类似UIViewContentMode
                       ),
                       boxShadow: const [
@@ -97,7 +100,7 @@ class _MinePageState extends State<MinePage> {
                             Text(
                               '微信号：1234',
                               style:
-                              TextStyle(fontSize: 17, color: Colors.grey),
+                                  TextStyle(fontSize: 17, color: Colors.grey),
                             ),
                             Icon(Icons.arrow_forward_ios)
                           ],
@@ -135,9 +138,9 @@ class _MinePageState extends State<MinePage> {
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (BuildContext context) =>
-                            const DiscoverChildPage(
-                              title: '支付',
-                            )));
+                                const DiscoverChildPage(
+                                  title: '支付',
+                                )));
                         print('进入点击方法');
                       },
                     ),
@@ -199,8 +202,11 @@ class _MinePageState extends State<MinePage> {
           )),
     );
   }
-
-  void _pickImage() {
-
+//pickImage是Future方法，因此要加async和await
+  void _pickImage() async{
+    XFile? file = await ImagePicker().pickImage(source: ImageSource.gallery);
+    setState(() {
+      _avatarFile = File(file!.path);
+    });
   }
 }
